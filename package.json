@@ -1,0 +1,12 @@
+{
+  "name": "RedditVideoMaker",
+  "version": "1.0.0",
+  "description": "Javascript bot to grab content from reddit and compile it in short videos, in format of reels, tiktok and youtube shorts",
+  "main": "index.js",
+  "repository": "https://github.com/joaoaugustogrobe/RedditVideoMaker.git",
+  "author": "João Augusto Grobe Castilho <contato@joaocastilho.com>",
+  "license": "GNU General Public License v3.0",
+  "dependencies": {
+    "readline-sync": "^1.4.10"
+  }
+}
