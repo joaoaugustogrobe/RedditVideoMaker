@@ -1,0 +1,50 @@
+version: '3.7'
+services:
+  api:
+    container_name: videomaker.api
+    build:
+      context: env/dev/node
+    volumes:
+      - ./api:/server:${CACHING_OPTION:-cached}
+      - ./common:/common:${CACHING_OPTION:-cached}
+    working_dir: /server
+    command: npm run start:dev
+    ports:
+      - "${API_EXPOSED_PORT:-3000}:${API_PORT:-3000}"
+    environment:
+      API_HOST: ${API_HOST:-'0.0.0.0'}
+      API_PORT: ${API_PORT:-3000}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-27017}
+      DB_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-videomaker}
+      DB_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-videomaker}
+      DB_NAME: ${DB_NAME:-videomaker}
+      JWT_KEY: ${JWT_KEY:-}
+    logging:
+      driver: "json-file"
+      options:
+        max-file: 3
+        max-size: 1m
+    depends_on:
+      - mongodb
+
+
+
+  mongodb:
+    container_name: videomaker.mongodb
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME:-videomaker}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD:-videomaker}"
+      MONGO_INITDB_DATABASE: "${MONGO_INITDB_DATABASE:-videomaker}"
+    volumes:
+      - type: bind
+        source: ./env/dev/mongo/mongo-init.js
+        target: /docker-entrypoint-initdb.d/mongo-init.js
+      - dev_mongodata:/data/db
+    ports:
+      - 27017:27017
+
+volumes:
+  dev_mongodata:
